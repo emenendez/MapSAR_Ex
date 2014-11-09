@@ -28,7 +28,7 @@ import arcpy, time
 from arcpy import env
 from types import *
 import subprocess
-import igt4sar
+import igt4sar, igt4sar.fdf
 
 # Environment variables
 wrkspc=arcpy.env.workspace
@@ -120,6 +120,8 @@ if __name__ == '__main__':
             MapCoord = row.getValue("MapCoord")
             Base_Phone = row.getValue("Base_PhoneNumber")
             Base_Freq = row.getValue("Comms_Freq")
+            UtmZone = row.getValue("UTM_ZONE")
+            UsngGrid = row.getValue("USNG_GRID")
             row = rows.next()
         del rows
         del row
@@ -522,7 +524,7 @@ if __name__ == '__main__':
                         elif Respond == Medic:
                             TAFfields['MedicAg'] = SARTeam
                         else:
-                             TAFfields.update({
+                            TAFfields.update({
                                 'Respond%d' % (k): Respond,
                                 'Respond%dAg' % (k): SARTeam
                             })
