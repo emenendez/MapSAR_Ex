@@ -74,10 +74,23 @@ if __name__ == '__main__':
     startupInfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     startupInfo.wShowWindow = 0
 
+
+    if arcpy.Exists("QRT_Points"):
+        fc5 = "QRT_Points"
+    elif arcpy.Exists("Hasty_Points"):
+        fc5 = "Hasty_Points"
+
+    if arcpy.Exists("QRT_Lines"):
+        fc6 = "QRT_Lines"
+    elif arcpy.Exists("Hasty_Line"):
+        fc6 = "Hasty_Line"
+
+    if arcpy.Exists("QRT_Segments"):
+        fc7 = "QRT_Segments"
+    elif arcpy.Exists("Hasty_Segments"):
+        fc7 = "Hasty_Segments"
+
     fc4 = "Search Segments"
-    fc5 = "Hasty_Points"
-    fc6 = "Hasty_Line"
-    fc7 = "Hasty_Segments"
     fc10 = "Air Search Pattern"
 
 
@@ -258,7 +271,7 @@ if __name__ == '__main__':
                             arcpy.AddWarning("Another feature has the same name")
                         else:
                             fc = fc5
-                            symbologyLayer = arcpy.mapping.ListLayers(mxd,"Hasty_Points",df)[0]
+                            symbologyLayer = arcpy.mapping.ListLayers(mxd,fc5,df)[0]
 
 
                 if arcpy.Exists(fc6):
@@ -270,7 +283,7 @@ if __name__ == '__main__':
                             arcpy.AddWarning("Another feature has the same name")
                         else:
                             fc = fc6
-                            symbologyLayer = arcpy.mapping.ListLayers(mxd,"Hasty_Line",df)[0]
+                            symbologyLayer = arcpy.mapping.ListLayers(mxd,fc6,df)[0]
 
 
                 if arcpy.Exists(fc7):
@@ -282,18 +295,20 @@ if __name__ == '__main__':
                             arcpy.AddWarning("Another feature has the same name")
                         else:
                             fc = fc7
-                            symbologyLayer = arcpy.mapping.ListLayers(mxd,"Hasty_Segments",df)[0]
+                            symbologyLayer = arcpy.mapping.ListLayers(mxd,fc7,df)[0]
+
 
                 if arcpy.Exists(fc10):
                     ##check for joins
-                    where4 = joinCheck("Area_Name".upper(),fc10, mxd, df,TaskMap)
-                    rows4 = arcpy.SearchCursor(fc10, where4)
+                    where10 = joinCheck("Area_Name",fc10, mxd, df,TaskMap)
+                    rows4 = arcpy.SearchCursor(fc10, where10)
                     for row4 in rows4:
                         if fc != "none":
                             arcpy.AddWarning("Another feature has the same name")
                         else:
                             fc = fc10
-                            symbologyLayer = arcpy.mapping.ListLayers(mxd,"Air Search Pattern",df)[0]
+                            symbologyLayer = arcpy.mapping.ListLayers(mxd,fc10,df)[0]
+
 
             except:
                 arcpy.AddError("failed to get feature layer")
