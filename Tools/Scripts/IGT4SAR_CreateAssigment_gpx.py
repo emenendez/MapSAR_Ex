@@ -183,6 +183,8 @@ if __name__ == '__main__':
         rows0 = arcpy.SearchCursor(fc2)
         row0 = rows0.next()
         while row0:
+            AssNum=AssNum.split(",")[0]
+            AssNum = AssNum.replace("'","")
             if row0.getValue("Assignment_Number")==AssNum:
                 fname = True
                 field1 = "Assignment_Number"
@@ -360,6 +362,28 @@ if __name__ == '__main__':
                         selectLayer = arcpy.mapping.ListLayers(mxd,"FgTrzG",df)[0]
                         ## Set transparency for the assigned area to 30% - Sept 13, 2013 - DHF
                         selectLayer.transparency = 30
+                        try:
+                            ##Label Features
+                            ##arcpy.AddMessage("Attempt labeling")
+                            if selectLayer.supports("LABELCLASSES"):
+                                ##arcpy.AddMessage("Supports Labelclasses\n")
+                                for lblclass in selectLayer.labelClasses:
+                                    lblclass.showClassLabels = True
+                                desc=arcpy.Describe("FgTrzG")
+                                # Get a list of field names from the feature
+                                shapeType = desc.shapeType
+                                fieldsList = desc.fields
+                                field_names=[f.name for f in fieldsList]
+                                if "Area_Name" in field_names:
+                                    lblclass.expression = "[Area_Name]"
+                                elif "AREA_NAME" in field_names:
+                                    lblclass.expression = "[AREA_NAME]"
+                                else:
+                                    lblclass.expression = ""
+                                updateLayer002.showLabels = True
+                            ###########
+                        except:
+                            pass
 
                         ##########################
                         ## Add segment points to map to help define segment borders
@@ -377,8 +401,16 @@ if __name__ == '__main__':
                                 ##arcpy.AddMessage("Supports Labelclasses\n")
                                 for lblclass in updateLayer002.labelClasses:
                                     lblclass.showClassLabels = True
-                            lblclass.expression = "[NAME]"
-                            updateLayer002.showLabels = True
+                                desc=arcpy.Describe("FgTrzPt")
+                                # Get a list of field names from the feature
+                                shapeType = desc.shapeType
+                                fieldsList = desc.fields
+                                field_names=[f.name for f in fieldsList]
+                                if "NAME" in field_names:
+                                    lblclass.expression = "[NAME]"
+                                else:
+                                    lblclass.expression = ""
+                                updateLayer002.showLabels = True
                             ###########
 
                             arcpy.mapping.UpdateLayer(df,updateLayer002,"Segment_Points",True)
